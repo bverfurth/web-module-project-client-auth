@@ -1,24 +1,57 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import Login from "./components/Login";
+import FriendForm from "./components/FriendForm";
+import FriendList from "./components/FriendList";
+import PrivateRoute from "./components/PrivateRoute";
+import axiosWithAuth from "./authorization/axiosWithAuth";
+import FriendsLogo from "../src/assets/FriendsLogo.png";
+import { BrowserRouter as Router, Route, Link, Switch } from "react-router-dom";
 
-function App() {
+import "./App.css";
+
+function App(props) {
+  const logout = () => {
+    localStorage.removeItem("token");
+  };
+
+  const isAuth = localStorage.getItem("token");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        <header className="App-header">
+          <div class="headerImage">
+            <img src={FriendsLogo} alt="Friends Logo" />
+            <h1></h1>
+          </div>
+          <ul>
+            <li>
+              <Link to="/login">Login</Link>
+            </li>
+            <li>
+              {!isAuth ? <Link to="/friends">Friends</Link> : <div></div>}
+            </li>
+            <li>
+              {!isAuth ? (
+                <Link to="/friends/form">Friends Form</Link>
+              ) : (
+                <div></div>
+              )}
+            </li>
+            <li>
+              <Link onClick={logout}>Logout</Link>
+            </li>
+          </ul>
+        </header>
+
+        <Switch>
+          <PrivateRoute exact path="/friends/form" component={FriendForm} />
+          <PrivateRoute exact path="/friends" component={FriendList} />
+          <Route path="/login" component={Login} />
+          <Route component={Login} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
